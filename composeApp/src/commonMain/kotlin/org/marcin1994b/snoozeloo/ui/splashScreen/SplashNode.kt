@@ -2,16 +2,12 @@ package org.marcin1994b.snoozeloo.ui.splashScreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.bumble.appyx.navigation.modality.NodeContext
 import com.bumble.appyx.navigation.node.LeafNode
-import org.marcin1994b.snoozeloo.design.AlarmCardView
-import org.marcin1994b.snoozeloo.theme.AppColors
 import org.marcin1994b.snoozeloo.theme.AppTheme
 
 class SplashNode(nodeContext: NodeContext) : LeafNode(nodeContext) {

@@ -3,12 +3,8 @@ package org.marcin1994b.snoozeloo.theme
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import snoozeloo.composeapp.generated.resources.Res
-import snoozeloo.composeapp.generated.resources.montserrat_thin
 
 data class AppTypography(
     val headline1: TextStyle = TextStyle(
