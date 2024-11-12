@@ -38,6 +38,10 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(compose.material3)
+
+            // time
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
 
             // appyx
             api("com.bumble.appyx:appyx-navigation:2.0.0-alpha10")
