@@ -15,6 +15,9 @@ import com.bumble.appyx.navigation.modality.NodeContext
 import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.marcin1994b.snoozeloo.di.AppModule
 import org.marcin1994b.snoozeloo.ui.alarmScreen.AlarmListNode
 import org.marcin1994b.snoozeloo.ui.alarmTriggerScreen.AlarmTriggerNode
 import org.marcin1994b.snoozeloo.ui.setAlarmScreen.SetAlarmNode
@@ -36,6 +39,9 @@ sealed class RootNodeNavTarget : Parcelable {
 
 class RootNode(
     nodeContext: NodeContext,
+    override val di: DI = DI {
+        import(AppModule.diContainer)
+    },
     private val backStack: BackStack<RootNodeNavTarget> = BackStack(
         model = BackStackModel(
             initialTarget = RootNodeNavTarget.SplashScreen,
@@ -46,12 +52,15 @@ class RootNode(
 ) : Node<RootNodeNavTarget>(
     appyxComponent = backStack,
     nodeContext = nodeContext
-) {
+), DIAware {
 
     override fun buildChildNode(navTarget: RootNodeNavTarget, nodeContext: NodeContext): Node<*> = when (navTarget) {
         RootNodeNavTarget.SplashScreen -> SplashNode(nodeContext)
 
-        RootNodeNavTarget.AlarmListScreen -> AlarmListNode(nodeContext)
+        RootNodeNavTarget.AlarmListScreen -> AlarmListNode(
+            nodeContext = nodeContext,
+            di = di
+        )
 
         RootNodeNavTarget.SetAlarmScreen -> SetAlarmNode(nodeContext)
 

@@ -40,6 +40,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(compose.material3)
 
+            implementation(libs.androidx.lifecycle.livedata.core.ktx)
+
             // time
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
 

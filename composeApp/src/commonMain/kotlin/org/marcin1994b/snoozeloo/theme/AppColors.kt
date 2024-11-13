@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 object AppColors {
     val BrandBlue = Color(0xff4664FF)
-    val Black = Color(0x000d0f19)
+    val Black = Color(0xff0d0f19)
     val White = Color(0xffffffff)
     val Grey050 = Color(0xfffbfbfb)
     val Grey060 = Color(0xfff9f9f9)

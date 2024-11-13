@@ -4,7 +4,7 @@ enum class DayOfWeek {
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 }
 
-fun DayOfWeek.toString() = when (this) {
+fun DayOfWeek.toText() = when (this) {
     DayOfWeek.MONDAY -> "Mo"
     DayOfWeek.TUESDAY -> "Tu"
     DayOfWeek.WEDNESDAY -> "We"
