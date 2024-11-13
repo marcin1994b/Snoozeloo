@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Chip
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import org.marcin1994b.snoozeloo.model.DayOfWeek
 import org.marcin1994b.snoozeloo.model.formatToAlarmTime
 import org.marcin1994b.snoozeloo.model.getAlarmCountDownText
+import org.marcin1994b.snoozeloo.model.toText
 import org.marcin1994b.snoozeloo.theme.AppColors
 import org.marcin1994b.snoozeloo.theme.AppTheme
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AlarmCardView(
     title: String?,
@@ -36,7 +33,7 @@ fun AlarmCardView(
         modifier = Modifier.background(
             color = AppColors.White,
             shape = AppTheme.shapes.medium
-        ).fillMaxWidth().height(180.dp).padding(vertical = 16.dp)
+        ).fillMaxWidth().padding(vertical = 16.dp)
     ) {
         Box(modifier = Modifier.padding(start = 16.dp).fillMaxWidth().height(105.dp)) {
             Text(
@@ -67,21 +64,22 @@ fun AlarmCardView(
                 color = AppColors.Grey500
             )
 
-            Switch(
+            AppSwitch(
                 modifier = Modifier.align(Alignment.TopEnd).width(100.dp).height(50.dp),
-                checked = isTurnOn,
-                onCheckedChange = { onSwitchClick(it) },
+                isChecked = isTurnOn,
+                onCheckChanged = { onSwitchClick(it) },
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        if (repeatOn.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
 
-        Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-            repeatOn.forEach {
-                Chip(
-                    onClick = {}
-                ) {
-                    Text(it.first.toString())
+            Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+                repeatOn.forEach {
+                    AppChips(
+                        label = it.first.toText(),
+                        isSelected = it.second
+                    )
                 }
             }
         }
