@@ -1,4 +1,4 @@
-package org.marcin1994b.snoozeloo.ui.alarmScreen
+package org.marcin1994b.snoozeloo.ui.alarmListScreen
 
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState

@@ -18,7 +18,7 @@ import com.bumble.appyx.utils.multiplatform.Parcelize
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.marcin1994b.snoozeloo.di.AppModule
-import org.marcin1994b.snoozeloo.ui.alarmScreen.AlarmListNode
+import org.marcin1994b.snoozeloo.ui.alarmListScreen.AlarmListNode
 import org.marcin1994b.snoozeloo.ui.alarmTriggerScreen.AlarmTriggerNode
 import org.marcin1994b.snoozeloo.ui.setAlarmScreen.SetAlarmNode
 import org.marcin1994b.snoozeloo.ui.splashScreen.SplashNode
@@ -44,7 +44,7 @@ class RootNode(
     },
     private val backStack: BackStack<RootNodeNavTarget> = BackStack(
         model = BackStackModel(
-            initialTarget = RootNodeNavTarget.SplashScreen,
+            initialTarget = RootNodeNavTarget.SetAlarmScreen,
             savedStateMap = nodeContext.savedStateMap
         ),
         visualisation = { BackStackFader(it) }
@@ -62,7 +62,10 @@ class RootNode(
             di = di
         )
 
-        RootNodeNavTarget.SetAlarmScreen -> SetAlarmNode(nodeContext)
+        RootNodeNavTarget.SetAlarmScreen -> SetAlarmNode(
+            nodeContext = nodeContext,
+            di = di
+        )
 
         RootNodeNavTarget.AlarmTriggerScreen -> AlarmTriggerNode(nodeContext)
     }

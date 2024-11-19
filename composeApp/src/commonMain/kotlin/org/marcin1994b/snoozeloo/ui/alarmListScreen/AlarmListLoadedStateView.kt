@@ -1,4 +1,4 @@
-package org.marcin1994b.snoozeloo.ui.alarmScreen
+package org.marcin1994b.snoozeloo.ui.alarmListScreen
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,13 +36,13 @@ fun AlarmListLoadedStateView(items: List<Alarm>) {
 
         items.forEach { alarmData ->
             item {
-                AlarmCardView(
-                    title = alarmData.name,
-                    timestamp = alarmData.time,
-                    isTurnOn = alarmData.isOn,
-                    repeatOn = alarmData.repeatOn,
-                    onSwitchClick = {}
-                )
+//                AlarmCardView(
+//                    title = alarmData.name,
+//                    timestamp = alarmData.time,
+//                    isTurnOn = alarmData.isOn,
+//                    repeatOn = alarmData.repeatOn,
+//                    onSwitchClick = {}
+//                )
             }
 
             item {
