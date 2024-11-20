@@ -3,22 +3,23 @@ package org.marcin1994b.snoozeloo.ui.setAlarmScreen
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.marcin1994b.snoozeloo.model.Alarm
-import org.marcin1994b.snoozeloo.model.DayOfWeek
+import org.marcin1994b.snoozeloo.db.AlarmEntity
+import org.marcin1994b.snoozeloo.db.AppDatabase
 import org.marcin1994b.snoozeloo.model.RepeatOn
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-class SetAlarmViewModel {
+class SetAlarmViewModel(
+    private val database: AppDatabase
+) {
 
     val alarmData = mutableStateOf(
-        Alarm(
+        AlarmEntity(
             id = Uuid.random().toString(),
             name = "Default",
             time = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
@@ -45,7 +46,7 @@ class SetAlarmViewModel {
             time = LocalTime(hour, minute, 0, 0)
         )
 
-        val newAlarm = Alarm(
+        val newAlarm = AlarmEntity(
             id = Uuid.random().toString(),
             name = alarmName,
             time = newTime,

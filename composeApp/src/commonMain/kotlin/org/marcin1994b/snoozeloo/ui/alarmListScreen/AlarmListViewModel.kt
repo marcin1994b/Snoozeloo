@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import org.marcin1994b.snoozeloo.model.Alarm
+import org.marcin1994b.snoozeloo.db.AlarmEntity
 import org.marcin1994b.snoozeloo.model.GetAlarms
 
 class AlarmListViewModel(
@@ -28,6 +28,6 @@ sealed class AlarmListViewState {
     data object Loading : AlarmListViewState()
     data object Empty : AlarmListViewState()
     data class Loaded(
-        val alarms: List<Alarm>
+        val alarms: List<AlarmEntity>
     ) : AlarmListViewState()
 }

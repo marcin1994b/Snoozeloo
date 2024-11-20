@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.room.RoomDatabase
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
 import com.bumble.appyx.components.backstack.operation.pop
@@ -17,6 +18,10 @@ import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
 import org.kodein.di.DI
 import org.kodein.di.DIAware
+import org.kodein.di.bindSingleton
+import org.kodein.di.diContext
+import org.marcin1994b.snoozeloo.db.AppDatabase
+import org.marcin1994b.snoozeloo.db.getRoomDatabase
 import org.marcin1994b.snoozeloo.di.AppModule
 import org.marcin1994b.snoozeloo.ui.alarmListScreen.AlarmListNode
 import org.marcin1994b.snoozeloo.ui.alarmTriggerScreen.AlarmTriggerNode
@@ -39,7 +44,9 @@ sealed class RootNodeNavTarget : Parcelable {
 
 class RootNode(
     nodeContext: NodeContext,
+    appDatabaseBuilder: RoomDatabase.Builder<AppDatabase>,
     override val di: DI = DI {
+        bindSingleton { getRoomDatabase(appDatabaseBuilder) }
         import(AppModule.diContainer)
     },
     private val backStack: BackStack<RootNodeNavTarget> = BackStack(

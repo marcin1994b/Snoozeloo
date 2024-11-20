@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -8,14 +7,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 
-//    kotlin("plugin.serialization")
-
     id("kotlin-parcelize")
     id("kotlin-kapt")
 
-//    // ROOM
-//    alias(libs.plugins.ksp)
-//    alias(libs.plugins.room)
+    // ROOM
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 
 }
 
@@ -43,29 +40,26 @@ kotlin {
             implementation(libs.androidx.lifecycle.livedata.core.ktx)
 
             // time
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+            implementation(libs.kotlinx.datetime)
 
             // appyx
-            api("com.bumble.appyx:appyx-navigation:2.0.0-alpha10")
-            api("com.bumble.appyx:backstack:2.0.0-alpha10")
-            api("com.bumble.appyx:spotlight:2.0.0-alpha10")
+            api(libs.appyx.navigation)
+            api(libs.appyx.backstack)
+            api(libs.appyx.spotlight)
 
             //kodein
-            api("org.kodein.di:kodein-di:7.22.0")
+            api(libs.kodein.di)
 
             // Room
-//            implementation(libs.room.runtime)
-//            implementation(libs.sqlite.bundled)
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
 
         }
         
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
-//            implementation(libs.room.runtime.android)
         }
-
     }
 
     listOf(
@@ -107,14 +101,19 @@ android {
     }
 }
 
-//room {
-//    schemaDirectory("$projectDir/schemas")
-//}
+
 
 dependencies {
     debugImplementation(compose.uiTooling)
 
-//    // ROOM
-//    add("kspCommonMainMetadata", libs.room.compiler)
+    // Android
+    add("kspAndroid", libs.room.compiler)
+    // iOS
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}

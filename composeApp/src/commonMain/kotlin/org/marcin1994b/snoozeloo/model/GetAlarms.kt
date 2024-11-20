@@ -1,12 +1,12 @@
 package org.marcin1994b.snoozeloo.model
 
+import org.marcin1994b.snoozeloo.db.AlarmEntity
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 class GetAlarms {
 
     @OptIn(ExperimentalUuidApi::class)
-    val mock = emptyList<Alarm>()
+    val mock = emptyList<AlarmEntity>()
 //        Alarm(
 //            id = Uuid.random().toString(),
 //            name = "Wake up",

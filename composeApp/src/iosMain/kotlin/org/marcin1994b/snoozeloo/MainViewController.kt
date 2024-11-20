@@ -8,6 +8,7 @@ import com.bumble.appyx.navigation.integration.IosNodeHost
 import com.bumble.appyx.navigation.integration.MainIntegrationPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import org.marcin1994b.snoozeloo.db.getDatabaseBuilder
 import org.marcin1994b.snoozeloo.theme.AppTheme
 
 
@@ -15,8 +16,9 @@ val backEvents: Channel<Unit> = Channel()
 
 private val integrationPoint = MainIntegrationPoint()
 
-
 fun MainViewController() = ComposeUIViewController {
+    val database = remember {  getDatabaseBuilder() }
+
     disableUiKitOverscroll()
     AppTheme {
         IosNodeHost(
@@ -25,7 +27,8 @@ fun MainViewController() = ComposeUIViewController {
             integrationPoint = remember { integrationPoint }
         ) {
             RootNode(
-                nodeContext = it
+                nodeContext = it,
+                appDatabaseBuilder = database
             )
         }
     }

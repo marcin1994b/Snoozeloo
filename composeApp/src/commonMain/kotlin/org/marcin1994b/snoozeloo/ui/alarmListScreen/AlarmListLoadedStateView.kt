@@ -9,12 +9,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.marcin1994b.snoozeloo.design.AlarmCardView
-import org.marcin1994b.snoozeloo.model.Alarm
+import org.marcin1994b.snoozeloo.db.AlarmEntity
 import org.marcin1994b.snoozeloo.theme.AppTheme
 
 @Composable
-fun AlarmListLoadedStateView(items: List<Alarm>) {
+fun AlarmListLoadedStateView(items: List<AlarmEntity>) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
     ) {
