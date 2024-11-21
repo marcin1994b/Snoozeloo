@@ -1,6 +1,7 @@
 package org.marcin1994b.snoozeloo.design
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,31 +15,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.marcin1994b.snoozeloo.model.DayOfWeek
-import org.marcin1994b.snoozeloo.model.formatToAlarmTime
-import org.marcin1994b.snoozeloo.model.getAlarmCountDownText
+import org.marcin1994b.snoozeloo.db.Alarm
 import org.marcin1994b.snoozeloo.model.toText
 import org.marcin1994b.snoozeloo.theme.AppColors
 import org.marcin1994b.snoozeloo.theme.AppTheme
 
 @Composable
 fun AlarmCardView(
-    title: String?,
-    timestamp: Long,
-    isTurnOn: Boolean,
-    repeatOn: List<Pair<DayOfWeek, Boolean>>,
-    onSwitchClick: (Boolean) -> Unit
+    alarm: Alarm,
+    onSwitchClick: (Boolean) -> Unit,
+    onItemClick: (Alarm) -> Unit
 ) {
     Column(
         modifier = Modifier.background(
             color = AppColors.White,
             shape = AppTheme.shapes.medium
-        ).fillMaxWidth().padding(vertical = 16.dp)
+        ).fillMaxWidth().padding(vertical = 16.dp).clickable { onItemClick(alarm) }
     ) {
         Box(modifier = Modifier.padding(start = 16.dp).fillMaxWidth().height(105.dp)) {
             Text(
                 modifier = Modifier.align(Alignment.TopStart).padding(bottom = 30.dp),
-                text = title ?: "Unknown",
+                text = alarm.name ?: "Default",
                 style = AppTheme.typography.headline6 + AppTheme.typography.bold,
             )
 
@@ -47,7 +44,7 @@ fun AlarmCardView(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = timestamp.formatToAlarmTime(),
+                    text = "${alarm.time.hour}:${alarm.time.minute}",
                     style = AppTheme.typography.headline3,
                 )
                 Spacer(modifier = Modifier.width(4.dp))
@@ -59,23 +56,23 @@ fun AlarmCardView(
 
             Text(
                 modifier = Modifier.align(Alignment.BottomStart),
-                text = timestamp.getAlarmCountDownText(),
+                text = "Alarm in 2h 30m",//timestamp.getAlarmCountDownText(),
                 style = AppTheme.typography.subtitle1,
                 color = AppColors.Grey500
             )
 
             AppSwitch(
                 modifier = Modifier.align(Alignment.TopEnd).width(100.dp).height(50.dp),
-                isChecked = isTurnOn,
+                isChecked = alarm.isOn,
                 onCheckChanged = { onSwitchClick(it) },
             )
         }
 
-        if (repeatOn.isNotEmpty()) {
+        if (alarm.repeatOn.days.isNotEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-                repeatOn.forEach {
+                alarm.repeatOn.days.forEach {
                     AppChips(
                         label = it.first.toText(),
                         isSelected = it.second

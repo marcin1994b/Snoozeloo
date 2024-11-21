@@ -10,22 +10,24 @@ import org.marcin1994b.snoozeloo.theme.AppColors
 @Composable
 fun AppChips(
     label: String,
-    isSelected: Boolean
+    isSelected: Boolean,
+    onClick: () -> Unit = {}
 ) {
     if (isSelected) {
-        SelectedChips(label)
+        SelectedChips(label, onClick)
     } else {
-        UnselectedChips(label)
+        UnselectedChips(label, onClick)
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SelectedChips(
-    label: String
+    label: String,
+    onClick: () -> Unit
 ) {
     Chip(
-        onClick = {},
+        onClick = onClick,
         colors = ChipDefaults.chipColors(
             backgroundColor = AppColors.BrandBlue,
             contentColor = AppColors.White
@@ -38,10 +40,11 @@ fun SelectedChips(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UnselectedChips(
-    label: String
+    label: String,
+    onClick: () -> Unit
 ) {
     Chip(
-        onClick = {},
+        onClick = onClick,
         colors = ChipDefaults.chipColors(
             backgroundColor = AppColors.Grey200,
             contentColor = AppColors.Black
