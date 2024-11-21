@@ -2,7 +2,8 @@
     <string name="app_name">My awesome app</string>
     <string name="title">Some title</string>
 
-    <string name="set_alarm_success_msg">Alarm added successfully</string>
-    <string name="set_alarm_update_msg">Alarm updated successfully</string>
-    <string name="set_alarm_failed_msg">Something went wrong</string>
+    <string name="set_alarm_added_successfully_msg">Alarm added successfully</string>
+    <string name="set_alarm_updated_successfully_msg">Alarm updated successfully</string>
+    <string name="set_alarm_deleted_successfully_msg">Alarm deleted successfully</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

@@ -22,7 +22,7 @@ import org.marcin1994b.snoozeloo.theme.AppTheme
 @Composable
 fun AppTopBar(
     title: String,
-    icon: ImageVector? = null,
+    icon: (@Composable () -> Unit)? = null,
     onBackButtonPress: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -52,11 +52,7 @@ fun AppTopBar(
         }
 
         icon?.let {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = AppTheme.colorScheme.onPrimary
-            )
+            icon()
         }
     }
 }
