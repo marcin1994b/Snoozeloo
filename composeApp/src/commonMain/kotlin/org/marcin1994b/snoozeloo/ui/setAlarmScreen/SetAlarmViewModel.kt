@@ -14,7 +14,7 @@ class SetAlarmViewModel(
     private val alarmDatabaseInteractor: AlarmDatabaseInteractor
 ) : ViewModel() {
 
-    val addedSuccessfully = mutableStateOf(false)
+    val finishView = mutableStateOf(false)
     val alarmData = mutableStateOf<Alarm?>(null)
 
     fun initViewData(alarmId: Int?) {
@@ -38,7 +38,7 @@ class SetAlarmViewModel(
             val result = alarmDatabaseInteractor.addAlarm(alarm)
 
             if (result is AlarmDatabaseResult.Success) {
-                addedSuccessfully.value = true
+                finishView.value = true
 
                 AppFeedback.data.emit(if (alarm.id == 0) {
                     AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmAddedSuccessfully
@@ -47,6 +47,21 @@ class SetAlarmViewModel(
                 })
             } else {
                 AppFeedback.data.emit(AppFeedbackMsg.AppFeedbackNegativeMsg.AlarmAddingFailed)
+            }
+        }
+    }
+
+    fun deleteAlarm() {
+        viewModelScope.launch {
+            alarmData.value?.let { alarm ->
+                val result = alarmDatabaseInteractor.deleteAlarm(alarm)
+
+                if (result is AlarmDatabaseResult.Success) {
+                    finishView.value = true
+                    AppFeedback.data.emit(AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmDeletedSuccessfully)
+                } else {
+                    AppFeedback.data.emit(AppFeedbackMsg.AppFeedbackNegativeMsg.AlarmDeletingFailed)
+                }
             }
         }
     }
