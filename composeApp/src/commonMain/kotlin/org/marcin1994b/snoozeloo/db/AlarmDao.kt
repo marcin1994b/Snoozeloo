@@ -9,15 +9,15 @@ import androidx.room.Upsert
 interface AlarmDao {
 
     @Upsert
-    suspend fun insert(alarm: AlarmEntity2)
+    suspend fun insert(alarm: Alarm)
 
-    @Query("SELECT * FROM AlarmEntity2 WHERE id = :id")
-    suspend fun getAlarmById(id: String): AlarmEntity2?
+    @Query("SELECT * FROM Alarm WHERE id = :id")
+    suspend fun getAlarmById(id: Int): Alarm?
 
-    @Query("SELECT * FROM AlarmEntity2")
-    suspend fun getAllAlarms(): List<AlarmEntity2>
+    @Query("SELECT * FROM Alarm")
+    suspend fun getAllAlarms(): List<Alarm>
 
     @Delete
-    suspend fun delete(alarm: AlarmEntity2)
+    suspend fun delete(alarm: Alarm)
 
 }

@@ -14,6 +14,9 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
 
+//    kotlin("jvm") version "2.0.20" // or kotlin("multiplatform") or any other kotlin plugin
+    kotlin("plugin.serialization") version "2.0.20"
+
 }
 
 kotlin {
@@ -53,6 +56,8 @@ kotlin {
             // Room
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+
+            implementation(libs.kotlinx.serialization.json)
 
         }
         

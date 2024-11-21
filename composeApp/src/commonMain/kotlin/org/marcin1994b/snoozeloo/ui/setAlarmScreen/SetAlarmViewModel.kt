@@ -1,63 +1,54 @@
 package org.marcin1994b.snoozeloo.ui.setAlarmScreen
 
 import androidx.compose.runtime.mutableStateOf
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import org.marcin1994b.snoozeloo.db.AlarmEntity
-import org.marcin1994b.snoozeloo.db.AppDatabase
-import org.marcin1994b.snoozeloo.model.RepeatOn
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import org.marcin1994b.snoozeloo.feedback.AppFeedback
+import org.marcin1994b.snoozeloo.feedback.AppFeedbackMsg
+import org.marcin1994b.snoozeloo.db.Alarm
+import org.marcin1994b.snoozeloo.interactors.AlarmDatabaseInteractor
+import org.marcin1994b.snoozeloo.interactors.AlarmDatabaseResult
 
-@OptIn(ExperimentalUuidApi::class)
 class SetAlarmViewModel(
-    private val database: AppDatabase
-) {
+    private val alarmDatabaseInteractor: AlarmDatabaseInteractor
+) : ViewModel() {
 
-    val alarmData = mutableStateOf(
-        AlarmEntity(
-            id = Uuid.random().toString(),
-            name = "Default",
-            time = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
-                .toLocalDateTime(TimeZone.currentSystemDefault()),
-            isOn = true,
-            ringtoneName = null,
-            volume = 1.0f,
-            shouldVibrate = true,
-            repeatOn = RepeatOn()
-        )
-    )
+    val addedSuccessfully = mutableStateOf(false)
+    val alarmData = mutableStateOf<Alarm?>(null)
 
-    fun saveAlarm(
-        hour: Int,
-        minute: Int,
-        alarmName: String,
-        ringtone: String,
-        vibrate: Boolean,
-        volume: Float,
-        repeatOn: RepeatOn
-    ) {
-        val newTime = LocalDateTime(
-            date = alarmData.value.time.date, // probably should add 1 day if past midnight
-            time = LocalTime(hour, minute, 0, 0)
-        )
+    fun initViewData(alarmId: Int?) {
+        viewModelScope.launch {
+             if (alarmId != null) {
+                alarmDatabaseInteractor.getAlarmById(alarmId).let { result ->
+                    if (result is AlarmDatabaseResult.GetAllSuccess) {
+                        alarmData.value = result.list.first()
+                    } else {
+                        alarmData.value = Alarm.mock
+                    }
+                }
+            } else {
+                 alarmData.value = Alarm.mock
+            }
+        }
+    }
 
-        val newAlarm = AlarmEntity(
-            id = Uuid.random().toString(),
-            name = alarmName,
-            time = newTime,
-            isOn = true,
-            ringtoneName = ringtone,
-            volume = volume,
-            shouldVibrate = vibrate,
-            repeatOn = repeatOn
-        )
+    fun saveAlarm(alarm: Alarm) {
+        viewModelScope.launch {
+            val result = alarmDatabaseInteractor.addAlarm(alarm)
 
-        println("Alarm -> ${newAlarm.toString()}")
+            if (result is AlarmDatabaseResult.Success) {
+                addedSuccessfully.value = true
+
+                AppFeedback.data.emit(if (alarm.id == 0) {
+                    AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmAddedSuccessfully
+                } else {
+                    AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmUpdatedSuccessfully
+                })
+            } else {
+                AppFeedback.data.emit(AppFeedbackMsg.AppFeedbackNegativeMsg.AlarmAddingFailed)
+            }
+        }
     }
 
 }

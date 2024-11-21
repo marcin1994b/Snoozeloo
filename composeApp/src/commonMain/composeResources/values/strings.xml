@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">My awesome app</string>
+    <string name="title">Some title</string>
+
+    <string name="set_alarm_success_msg">Alarm added successfully</string>
+    <string name="set_alarm_update_msg">Alarm updated successfully</string>
+    <string name="set_alarm_failed_msg">Something went wrong</string>
+</resources>

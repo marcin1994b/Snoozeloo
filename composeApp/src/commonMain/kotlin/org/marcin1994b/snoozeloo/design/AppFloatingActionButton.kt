@@ -15,7 +15,7 @@ fun AppFloatingActionButton(
     onClick: () -> Unit,
 ) {
     FloatingActionButton(
-        modifier = Modifier.padding(bottom = 20.dp, end = 20.dp),
+        modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
         onClick = onClick,
         backgroundColor = AppColors.BrandBlue,
     ) {

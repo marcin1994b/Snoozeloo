@@ -2,7 +2,9 @@ package org.marcin1994b.snoozeloo.model
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RepeatOn(
     val days: List<Pair<DayOfWeek, Boolean>> = listOf(
         DayOfWeek.MONDAY to false,

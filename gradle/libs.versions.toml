@@ -17,6 +17,7 @@ junit = "4.13.2"
 kodeinDi = "7.22.0"
 kotlin = "2.0.20"
 kotlinxDatetime = "0.6.0"
+kotlinxSerializationJson = "1.7.3"
 room = "2.7.0-alpha06"
 ksp = "2.0.20-1.0.25"
 sqlite = "2.5.0-SNAPSHOT"
@@ -41,6 +42,7 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 # Room
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 sqlite-bundled = { module= "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
