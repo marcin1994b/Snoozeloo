@@ -3,7 +3,12 @@ package org.marcin1994b.snoozeloo.ui.setAlarmScreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.marcin1994b.snoozeloo.Ticker
 import org.marcin1994b.snoozeloo.feedback.AppFeedback
 import org.marcin1994b.snoozeloo.feedback.AppFeedbackMsg
 import org.marcin1994b.snoozeloo.db.Alarm
@@ -16,6 +21,7 @@ class SetAlarmViewModel(
 
     val finishView = mutableStateOf(false)
     val alarmData = mutableStateOf<Alarm?>(null)
+    val currentLocalTime = mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()))
 
     fun initViewData(alarmId: Int?) {
         viewModelScope.launch {
@@ -30,6 +36,8 @@ class SetAlarmViewModel(
             } else {
                  alarmData.value = Alarm.mock
             }
+
+            startTimeTicker()
         }
     }
 
@@ -64,6 +72,18 @@ class SetAlarmViewModel(
                 }
             }
         }
+    }
+
+    private fun CoroutineScope.startTimeTicker() {
+        Ticker(
+            tickInMillis = 1000,
+            onTick = {
+                val time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                if (currentLocalTime.value.minute != time.minute) {
+                    currentLocalTime.value = time
+                }
+            }
+        )
     }
 
 }
