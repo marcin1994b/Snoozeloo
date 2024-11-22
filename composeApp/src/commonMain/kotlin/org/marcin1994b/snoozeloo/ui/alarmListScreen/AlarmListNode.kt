@@ -44,7 +44,11 @@ class AlarmListNode(
                 AlarmListViewState.Empty -> AlarmListEmptyStateView()
                 is AlarmListViewState.Loaded -> AlarmListLoadedStateView(
                     items = viewState.alarms,
-                    onAlarmItemClick = onAlarmItemClick
+                    currentTime = viewModel.currentLocalTime.value,
+                    onAlarmItemClick = onAlarmItemClick,
+                    onAlarmSwitchClick = { alarm ->
+                        viewModel.switchAlarm(alarm)
+                    }
                 )
             }
         }

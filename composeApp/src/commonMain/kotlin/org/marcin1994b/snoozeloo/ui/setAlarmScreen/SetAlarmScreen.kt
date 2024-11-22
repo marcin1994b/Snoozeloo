@@ -15,7 +15,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 import org.marcin1994b.snoozeloo.db.Alarm
 import org.marcin1994b.snoozeloo.design.AlarmNameDialog
 import org.marcin1994b.snoozeloo.design.AppRepeatOnRow
@@ -56,11 +54,16 @@ fun SetAlarmScreen(
         mutableStateOf(alarmData.name)
     }
 
-    val timePickerState = rememberTimePickerState(
-        initialHour = alarmData.time.hour,
-        initialMinute = alarmData.time.minute,
-        true
-    )
+    var timePickerState by remember {
+        mutableStateOf<Hours>(FullHours(
+            hours = alarmData.alarmHour,
+            minutes = alarmData.alarmMinute
+        ))
+    }
+
+    var alarmInTextState by remember {
+        mutableStateOf("")
+    }
 
     val volumeSliderState = SliderState(
         value = alarmData.volume,
@@ -92,11 +95,8 @@ fun SetAlarmScreen(
         )
     }
 
-    var pickerValue by remember { mutableStateOf<Hours>(FullHours(9, 12)) }
-    var textValue by remember { mutableStateOf("") }
-
-    LaunchedEffect(key1 = pickerValue.hours, key2 = pickerValue.minutes, key3 = currentTime) {
-        textValue = getAlarmInText(pickerValue.hours, pickerValue.minutes, repeatOnState.value.toRepeatOn())
+    LaunchedEffect(key1 = timePickerState.hours, key2 = timePickerState.minutes, key3 = currentTime) {
+        alarmInTextState = getAlarmInText(timePickerState.hours, timePickerState.minutes, repeatOnState.value.toRepeatOn())
     }
 
     Column(
@@ -115,9 +115,9 @@ fun SetAlarmScreen(
 
             HoursNumberPicker(
                 dividersColor = AppColors.BrandBlue,
-                value = pickerValue,
+                value = timePickerState,
                 onValueChange = {
-                    pickerValue = it
+                    timePickerState = it
                 },
                 hoursDivider = {
                     Text(
@@ -134,12 +134,12 @@ fun SetAlarmScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            if (textValue.isNotEmpty()) {
+            if (alarmInTextState.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     textAlign = TextAlign.Center,
                     color = AppColors.Grey400,
-                    text = "Alarm in ${textValue}",
+                    text = "Alarm in ${alarmInTextState}",
                     style = AppTheme.typography.headline6
                 )
 
@@ -162,7 +162,11 @@ fun SetAlarmScreen(
         AppRepeatOnRow(
             repeatOn = repeatOnState.value,
             onAnyChipsClick = {
-                textValue = getAlarmInText(pickerValue.hours, pickerValue.minutes, repeatOnState.value.toRepeatOn())
+                alarmInTextState = getAlarmInText(
+                    timePickerState.hours,
+                    timePickerState.minutes,
+                    repeatOnState.value.toRepeatOn()
+                )
             }
         )
 
@@ -206,14 +210,11 @@ fun SetAlarmScreen(
                     disabledContentColor = AppColors.White
                 ),
                 onClick = {
-                    val newTime = LocalDateTime(
-                        date = alarmData.time.date, // probably should add 1 day if past midnight
-                        time = LocalTime(timePickerState.hour, timePickerState.minute, 0, 0)
-                    )
                     Alarm(
                         id = alarmData.id,
                         name = initialAlarmName.value,
-                        time = newTime,
+                        alarmHour = timePickerState.hours,
+                        alarmMinute = timePickerState.minutes,
                         isOn = true,
                         ringtoneName = "TODO",
                         volume = volumeSliderState.value,

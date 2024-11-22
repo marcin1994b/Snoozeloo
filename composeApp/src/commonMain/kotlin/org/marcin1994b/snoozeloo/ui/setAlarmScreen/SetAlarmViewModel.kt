@@ -43,6 +43,7 @@ class SetAlarmViewModel(
 
     fun saveAlarm(alarm: Alarm) {
         viewModelScope.launch {
+            println("KUPA alarm -> ${alarm}")
             val result = alarmDatabaseInteractor.addAlarm(alarm)
 
             if (result is AlarmDatabaseResult.Success) {
