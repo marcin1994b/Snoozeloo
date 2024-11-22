@@ -9,7 +9,7 @@ import org.marcin1994b.snoozeloo.theme.AppColors
 
 @Composable
 fun AppSwitch(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     isChecked: Boolean,
     onCheckChanged: (Boolean) -> Unit
 ) {

@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalDateTime
 import org.marcin1994b.snoozeloo.db.Alarm
 import org.marcin1994b.snoozeloo.design.AlarmCardView
 import org.marcin1994b.snoozeloo.theme.AppTheme
@@ -16,7 +17,9 @@ import org.marcin1994b.snoozeloo.theme.AppTheme
 @Composable
 fun AlarmListLoadedStateView(
     items: List<Alarm>,
-    onAlarmItemClick: (Alarm) -> Unit
+    currentTime: LocalDateTime,
+    onAlarmItemClick: (Alarm) -> Unit,
+    onAlarmSwitchClick: (Alarm) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
@@ -38,10 +41,11 @@ fun AlarmListLoadedStateView(
         }
 
         items.forEach { alarmData ->
-            item {
+            item(key = alarmData.id) {
                 AlarmCardView(
                     alarm = alarmData,
-                    onSwitchClick = {},
+                    currentTime = currentTime,
+                    onSwitchClick = onAlarmSwitchClick,
                     onItemClick = onAlarmItemClick
                 )
             }
