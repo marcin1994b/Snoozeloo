@@ -18,7 +18,8 @@ import org.marcin1994b.snoozeloo.theme.AppTheme
 
 @Composable
 fun AppRepeatOnRow(
-    repeatOn: MutableRepeatOn
+    repeatOn: MutableRepeatOn,
+    onAnyChipsClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -40,7 +41,10 @@ fun AppRepeatOnRow(
                 AppChips(
                     label = day.first.toText(),
                     isSelected = day.second.value,
-                    onClick = { repeatOn.days[index].second.value = !day.second.value }
+                    onClick = {
+                        repeatOn.days[index].second.value = !day.second.value
+                        onAnyChipsClick()
+                    }
                 )
             }
         }

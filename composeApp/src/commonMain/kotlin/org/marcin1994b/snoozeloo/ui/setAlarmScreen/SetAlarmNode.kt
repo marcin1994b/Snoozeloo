@@ -68,6 +68,7 @@ class SetAlarmNode(
             viewModel.alarmData.value?.let {
                 SetAlarmScreen(
                     alarmData = it,
+                    currentTime = viewModel.currentLocalTime.value,
                     onSaveButtonClick = { alarm ->
                         viewModel.saveAlarm(alarm)
                     }

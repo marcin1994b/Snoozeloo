@@ -1,48 +1,87 @@
 package org.marcin1994b.snoozeloo.model
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
-fun Long.formatToAlarmTime(): String {
-    val localTime = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.currentSystemDefault())
+fun getAlarmDuration(alarmHour: Int, alarmMinute: Int, repeatOn: RepeatOn): Duration {
+    val currentTime = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
+        .toLocalDateTime(TimeZone.currentSystemDefault())
 
-    val formattedHour = if (localTime.hour in (0..9)) {
-        "0${localTime.hour}"
-    } else {
-        "${localTime.hour}"
+    var daysUntil = 0
+
+    if (repeatOn.days.any { it.second }) {
+        val currentDayOfWeek = currentTime.dayOfWeek.isoDayNumber
+        var numberOfNextRepeatDay = 0
+
+        for (index in (currentDayOfWeek+1..currentDayOfWeek+7)) {
+
+            if (repeatOn.days[(index-1).mod(7)].second) {
+                numberOfNextRepeatDay = index
+                break
+            }
+        }
+
+        daysUntil = if (repeatOn.days[currentDayOfWeek-1].second && ((alarmHour == currentTime.hour && alarmMinute > currentTime.minute) || (alarmHour > currentTime.hour))) {
+            0
+        } else if (numberOfNextRepeatDay < currentDayOfWeek) {
+            numberOfNextRepeatDay - currentDayOfWeek
+        } else if (numberOfNextRepeatDay > currentDayOfWeek) {
+            numberOfNextRepeatDay - currentDayOfWeek
+        } else {
+            7
+        }
+
+    } else if ((alarmHour == currentTime.hour && alarmMinute < currentTime.minute) || (alarmHour < currentTime.hour)) {
+        daysUntil = 1
+    } else if (currentTime.hour == alarmHour && currentTime.minute == alarmMinute) {
+        daysUntil = 1
     }
 
-    val formattedMinutes = if (localTime.minute in (0..9)) {
-        "0${localTime.minute}"
-    } else {
-        "${localTime.minute}"
-    }
+    val alarmDateTime = LocalDateTime(
+        date = currentTime.date.plus(DatePeriod(0,0, daysUntil)),
+        time = LocalTime(
+            hour = alarmHour,
+            minute = alarmMinute+1
+        )
+    )
 
-    return "${formattedHour}:${formattedMinutes}"
+    val alarmDuration = alarmDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds().toDuration(
+        DurationUnit.MILLISECONDS)
+    val currentTimeDuration = currentTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds().toDuration(
+        DurationUnit.MILLISECONDS)
+
+    return alarmDuration.minus(currentTimeDuration)
 }
 
-fun Long.getAlarmCountDownText(): String {
-    val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-    val localAlarmTime = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.currentSystemDefault())
+fun getAlarmInText(alarmHour: Int, alarmMinute: Int, repeatOn: RepeatOn): String {
+    val alarmDuration = getAlarmDuration(alarmHour, alarmMinute, repeatOn)
 
-    val hoursToAlarm = currentTime.hour.minus(localAlarmTime.hour).hours.absoluteValue.inWholeHours
-    val minutesToAlarm = currentTime.minute.minus(localAlarmTime.minute).minutes.absoluteValue.inWholeMinutes
+    val daysToAlarm = if (alarmDuration.inWholeDays == 0L) "" else "${alarmDuration.inWholeDays}d"
+    val hoursToAlarm = if (alarmDuration.inWholeHours.mod(24) == 0) "" else "${alarmDuration.inWholeHours.mod(24)}h"
+    val minutesToAlarm = if (alarmDuration.inWholeMinutes.mod(60) == 0) "" else "${(alarmDuration.inWholeMinutes).mod(60)}m"
 
-    var time = if (hoursToAlarm != 0L) {
-        "$hoursToAlarm h"
-    } else {
-        ""
+    return buildString {
+        if (daysToAlarm.isNotEmpty()) {
+            append("$daysToAlarm ")
+        }
+
+        if (hoursToAlarm.isNotEmpty()) {
+            append("$hoursToAlarm ")
+        }
+
+        if (minutesToAlarm.isNotEmpty()) {
+            append("$minutesToAlarm ")
+        }
     }
-
-    time = "$time " + if (minutesToAlarm != 0L) {
-        "$minutesToAlarm mins"
-    } else {
-        ""
-    }
-
-    return "Alarm in $time"
 }
