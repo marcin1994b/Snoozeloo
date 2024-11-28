@@ -14,7 +14,7 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-fun getAlarmDuration(alarmHour: Int, alarmMinute: Int, repeatOn: RepeatOn): Duration {
+fun getAlarmDateTime(alarmHour: Int, alarmMinute: Int, repeatOn: RepeatOn): LocalDateTime {
     val currentTime = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
         .toLocalDateTime(TimeZone.currentSystemDefault())
 
@@ -48,18 +48,25 @@ fun getAlarmDuration(alarmHour: Int, alarmMinute: Int, repeatOn: RepeatOn): Dura
         daysUntil = 1
     }
 
-    val alarmDateTime = LocalDateTime(
+    return LocalDateTime(
         date = currentTime.date.plus(DatePeriod(0,0, daysUntil)),
         time = LocalTime(
             hour = alarmHour,
             minute = alarmMinute+1
         )
     )
+}
 
-    val alarmDuration = alarmDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds().toDuration(
-        DurationUnit.MILLISECONDS)
-    val currentTimeDuration = currentTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds().toDuration(
-        DurationUnit.MILLISECONDS)
+fun getAlarmDuration(alarmHour: Int, alarmMinute: Int, repeatOn: RepeatOn): Duration {
+
+    val alarmDuration = getAlarmDateTime(alarmHour, alarmMinute, repeatOn)
+        .toInstant(TimeZone.currentSystemDefault())
+        .toEpochMilliseconds()
+        .toDuration(DurationUnit.MILLISECONDS)
+
+    val currentTimeDuration = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
+        .toEpochMilliseconds()
+        .toDuration(DurationUnit.MILLISECONDS)
 
     return alarmDuration.minus(currentTimeDuration)
 }

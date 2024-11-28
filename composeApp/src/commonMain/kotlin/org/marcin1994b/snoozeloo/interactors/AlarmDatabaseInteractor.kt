@@ -9,8 +9,8 @@ class AlarmDatabaseInteractor(
 
     suspend fun addAlarm(alarm: Alarm): AlarmDatabaseResult {
         return try {
-            database.alarmDao().insert(alarm)
-            AlarmDatabaseResult.Success
+            val alarmId = database.alarmDao().insert(alarm)
+            AlarmDatabaseResult.Success(alarmId)
         } catch (e: Exception) {
             AlarmDatabaseResult.Failed
         }
@@ -18,8 +18,8 @@ class AlarmDatabaseInteractor(
 
     suspend fun updateAlarm(alarm: Alarm): AlarmDatabaseResult {
         return try {
-            database.alarmDao().insert(alarm)
-            AlarmDatabaseResult.Success
+            val alarmId = database.alarmDao().insert(alarm)
+            AlarmDatabaseResult.Success(alarmId)
         } catch (e: Exception) {
             AlarmDatabaseResult.Failed
         }
@@ -28,7 +28,7 @@ class AlarmDatabaseInteractor(
     suspend fun deleteAlarm(alarm: Alarm): AlarmDatabaseResult {
         return try {
             database.alarmDao().delete(alarm)
-            AlarmDatabaseResult.Success
+            AlarmDatabaseResult.Success(null)
         } catch (e: Exception) {
             AlarmDatabaseResult.Failed
         }
@@ -43,7 +43,7 @@ class AlarmDatabaseInteractor(
         }
     }
 
-    suspend fun getAlarmById(alarmId: Int): AlarmDatabaseResult {
+    suspend fun getAlarmById(alarmId: Long): AlarmDatabaseResult {
         return try {
             database.alarmDao().getAlarmById(alarmId)?.let {
                 AlarmDatabaseResult.GetAllSuccess(listOf(it))
@@ -56,6 +56,6 @@ class AlarmDatabaseInteractor(
 
 sealed interface AlarmDatabaseResult {
     data object Failed: AlarmDatabaseResult
-    data object Success: AlarmDatabaseResult
+    data class Success(val alarmId: Long?): AlarmDatabaseResult
     data class GetAllSuccess(val list: List<Alarm>): AlarmDatabaseResult
 }
