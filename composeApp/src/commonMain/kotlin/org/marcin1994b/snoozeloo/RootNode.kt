@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.room.RoomDatabase
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
 import com.bumble.appyx.components.backstack.operation.pop
@@ -22,20 +21,15 @@ import com.bumble.appyx.utils.multiplatform.Parcelize
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.DI
 import org.kodein.di.DIAware
-import org.kodein.di.bindSingleton
-import org.marcin1994b.snoozeloo.db.AppDatabase
-import org.marcin1994b.snoozeloo.db.getRoomDatabase
 import org.marcin1994b.snoozeloo.design.SnackError
 import org.marcin1994b.snoozeloo.design.SnackState
 import org.marcin1994b.snoozeloo.design.SnackSuccess
 import org.marcin1994b.snoozeloo.design.rememberSnackState
-import org.marcin1994b.snoozeloo.di.AppModule
 import org.marcin1994b.snoozeloo.feedback.AppFeedback
 import org.marcin1994b.snoozeloo.feedback.AppFeedbackMsg
 import org.marcin1994b.snoozeloo.feedback.toStringRes
 import org.marcin1994b.snoozeloo.theme.AppColors
 import org.marcin1994b.snoozeloo.ui.alarmListScreen.AlarmListNode
-import org.marcin1994b.snoozeloo.ui.alarmTriggerScreen.AlarmTriggerNode
 import org.marcin1994b.snoozeloo.ui.setAlarmScreen.SetAlarmNode
 import org.marcin1994b.snoozeloo.ui.splashScreen.SplashNode
 
@@ -50,18 +44,11 @@ sealed class RootNodeNavTarget : Parcelable {
     data class SetAlarmScreen(
         val alarmId: Int?
     ) : RootNodeNavTarget()
-
-    @Parcelize
-    data object AlarmTriggerScreen: RootNodeNavTarget()
 }
 
 class RootNode(
     nodeContext: NodeContext,
-    appDatabaseBuilder: RoomDatabase.Builder<AppDatabase>,
-    override val di: DI = DI {
-        bindSingleton { getRoomDatabase(appDatabaseBuilder) }
-        import(AppModule.diContainer)
-    },
+    override val di: DI,
     private val backStack: BackStack<RootNodeNavTarget> = BackStack(
         model = BackStackModel(
             initialTarget = RootNodeNavTarget.AlarmListScreen,
@@ -93,8 +80,6 @@ class RootNode(
             di = di,
             alarmId = navTarget.alarmId
         )
-
-        RootNodeNavTarget.AlarmTriggerScreen -> AlarmTriggerNode(nodeContext)
     }
 
     @Composable

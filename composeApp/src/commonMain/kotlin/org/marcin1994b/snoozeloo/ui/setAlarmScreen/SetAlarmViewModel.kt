@@ -9,6 +9,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.marcin1994b.snoozeloo.Ticker
+import org.marcin1994b.snoozeloo.alarmScheduler.AlarmScheduler
 import org.marcin1994b.snoozeloo.feedback.AppFeedback
 import org.marcin1994b.snoozeloo.feedback.AppFeedbackMsg
 import org.marcin1994b.snoozeloo.db.Alarm
@@ -16,7 +17,8 @@ import org.marcin1994b.snoozeloo.interactors.AlarmDatabaseInteractor
 import org.marcin1994b.snoozeloo.interactors.AlarmDatabaseResult
 
 class SetAlarmViewModel(
-    private val alarmDatabaseInteractor: AlarmDatabaseInteractor
+    private val alarmDatabaseInteractor: AlarmDatabaseInteractor,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     val finishView = mutableStateOf(false)
@@ -26,7 +28,7 @@ class SetAlarmViewModel(
     fun initViewData(alarmId: Int?) {
         viewModelScope.launch {
              if (alarmId != null) {
-                alarmDatabaseInteractor.getAlarmById(alarmId).let { result ->
+                alarmDatabaseInteractor.getAlarmById(alarmId.toLong()).let { result ->
                     if (result is AlarmDatabaseResult.GetAllSuccess) {
                         alarmData.value = result.list.first()
                     } else {
@@ -43,17 +45,24 @@ class SetAlarmViewModel(
 
     fun saveAlarm(alarm: Alarm) {
         viewModelScope.launch {
-            println("KUPA alarm -> ${alarm}")
             val result = alarmDatabaseInteractor.addAlarm(alarm)
 
             if (result is AlarmDatabaseResult.Success) {
-                finishView.value = true
-
-                AppFeedback.data.emit(if (alarm.id == 0) {
-                    AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmAddedSuccessfully
-                } else {
-                    AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmUpdatedSuccessfully
-                })
+                result.alarmId?.let {
+                    alarmDatabaseInteractor.getAlarmById(result.alarmId).let {
+                        if (it is AlarmDatabaseResult.GetAllSuccess) {
+                            alarmScheduler.schedule(it.list.first())
+                            finishView.value = true
+                            AppFeedback.data.emit(if (alarm.id == 0) {
+                                AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmAddedSuccessfully
+                            } else {
+                                AppFeedbackMsg.AppFeedbackPositiveMsg.AlarmUpdatedSuccessfully
+                            })
+                        } else {
+                            AppFeedback.data.emit(AppFeedbackMsg.AppFeedbackNegativeMsg.AlarmAddingFailed)
+                        }
+                    }
+                }
             } else {
                 AppFeedback.data.emit(AppFeedbackMsg.AppFeedbackNegativeMsg.AlarmAddingFailed)
             }

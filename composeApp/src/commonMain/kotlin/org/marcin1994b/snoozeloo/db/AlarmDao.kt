@@ -9,10 +9,10 @@ import androidx.room.Upsert
 interface AlarmDao {
 
     @Upsert
-    suspend fun insert(alarm: Alarm)
+    suspend fun insert(alarm: Alarm): Long
 
     @Query("SELECT * FROM Alarm WHERE id = :id")
-    suspend fun getAlarmById(id: Int): Alarm?
+    suspend fun getAlarmById(id: Long): Alarm?
 
     @Query("SELECT * FROM Alarm")
     suspend fun getAllAlarms(): List<Alarm>

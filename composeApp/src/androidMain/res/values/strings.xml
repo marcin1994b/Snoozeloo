@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Snoozeloo</string>
+
+    <string name="notification_message">Do you want to snooze alarm?</string>
+    <string name="notification_action_snooze">Snooze</string>
+    <string name="notification_action_cancel">Cancel</string>
 </resources>
